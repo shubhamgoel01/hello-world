@@ -1,0 +1,265 @@
+devOps Project- CI-CD with Jenkins Ansible Docker Kubernetes
+
+jenkins - Room
+
+jenkins credentials:  
+shubham/shubham
+http://192.168.0.130:9091/
+
+cat ~/.bash_profile
+Download JAVA/jenkins/maven and set path accordingly
+
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+fi
+
+# User specific environment and startup programs
+JAVA_HOME=/usr/java/jdk-17
+
+M2_HOME=/opt/maven/apache-maven-3.9.1
+M2=$M2_HOME/bin
+PATH=$PATH:$HOME/bin:$M2_HOME:$M2:$JAVA_HOME
+
+export PATH
+
+save and exit 
+
+echo $JAVA_HOME
+su
+echo $JAVA_HOME
+
+
+Now Set the JAVA/maven in jenkins server
+
+jenkins plugin
+1) github integration /github
+2) maven integrate / maven invoker
+
+Manage Jenkins -> Global tool config -> JDK
+
+name:JAVA_HOME
+JAVA_HOME:/usr/java/jdk-17/
+
+Manage Jenkins -> Global tool config -> maven
+Name : M2_HOME
+MAVEN_HOME : /opt/maven/apache-maven-3.9.2
+
+
+save it
+
+Create a maven job :
+Github project : https://github.com/shubhamgoel01/hello-world.git
+goal : clean install package then build
+ll /root/.jenkins/workspace/job2_maven_build/webapp/target/webapp.war
+
+-------------------------------------------------------------
+3) Intigrating tomcat server in jenkins
+-------------------------------------------------------------
+Download and start tomcat in local 
+http://192.168.0.130:8080/
+when click to manager App -> need access , so modify the files as below
+
+find / -name context.xml
+comment the line with -> Value ClassName  and restart the tomcat , now you can access default project
+
+/opt/tomcat/conf/context.xml
+/opt/tomcat/webapps/docs/META-INF/context.xml
+/opt/tomcat/webapps/examples/META-INF/context.xml
+/opt/tomcat/webapps/host-manager/META-INF/context.xml
+/opt/tomcat/webapps/manager/META-INF/context.xml
+
+
+
+Update users information in the tomcat-users.xml file goto tomcat home directory and Add below users to  below file
+vim conf/tomcat-users.xml 
+ <role rolename="manager-gui"/>
+ <role rolename="manager-script"/>
+ <role rolename="manager-jmx"/>
+ <role rolename="manager-status"/>
+ <user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+ <user username="deployer" password="deployer" roles="manager-script"/>
+ <user username="tomcat" password="s3cret" roles="manager-gui"/>
+
+
+To login tomcat server
+tomcat/s3cret
+-------------------------------------------------------------
+	Deploy on tomcat server
+-------------------------------------------------------------
+Jenkins plugin : deploy to container (to deploy on tomcat-running in other box)
+
+create a new maven job 
+github project : 
+goal : clean install package
+Post-build Actions : select deploy to container 
+WAR/EAR files :  **/*.war
+Context path : 
+Containers: select tomact9
+		Credentials : deployer/deployer
+		Tomcat URL : http://192.168.0.130:8080
+
+Build now and http://192.168.0.130:8080/webapp
+
+Poll SCM : * * * * * 
+to check any changes every 1 minute . if yes then job start building
+
+------set time in linux------
+timedatectl
+sudo timedatectl set-timezone Asia/Kolkata
+sudo timedatectl set-ntp true
+date
+sudo timedatectl set-timezone Asia/Kolkata Asia/Kolkata
+
+--------------------------------------------------------------------
+4 ) Integrating Docker in CI/CD - jenkins
+--------------------------------------------------------------------
+
+start docker in local window / VM 
+and pull tomcat image and start container
+
+
+
+C:\Users\shubh>docker pull tomcat:9.0.75
+9.0.75: Pulling from library/tomcat
+1bc677758ad7: Pull complete
+0d0e0ecb256a: Pull complete
+c24bf4c725c2: Pull complete
+4fb255c76461: Pull complete
+b388fec4cd21: Pull complete
+99a8fb48e61c: Pull complete
+44f4facf54e7: Pull complete
+Digest: sha256:92bdc746db04e2bb7764e19c68fcb68e3bb6eeebcee765b964526c13bb5598b3
+Status: Downloaded newer image for tomcat:9.0.75
+docker.io/library/tomcat:9.0.75
+
+C:\Users\shubh>docker images
+REPOSITORY   TAG       IMAGE ID       CREATED      SIZE
+tomcat       9.0.75    5c0a063260b0   4 days ago   476MB
+
+C:\Users\shubh>
+C:\Users\shubh>
+C:\Users\shubh>
+C:\Users\shubh>docker run --name tomactcont1 -d -it -p 7070:8080 tomcat:9.0.75
+c88b22ee39b40baa9c36eccecd646c3f22fd49519310c4d0c39b0f34772232ad
+
+C:\Users\shubh>docker ps
+CONTAINER ID   IMAGE           COMMAND             CREATED          STATUS         PORTS                    NAMES
+c88b22ee39b4   tomcat:9.0.75   "catalina.sh run"   10 seconds ago   Up 9 seconds   0.0.0.0:7070->8080/tcp   tomactcont1
+
+
+------------------------------------------------------------------------------------
+# Deploy war file over ssh (another VM , in that VM we can run docker and create docker file and in jenkins we can start build and run container)
+# here we are adding VM into jenkins
+Jenkins plugin : publish over ssh  
+
+manage jenkins -> Configure system ->  Publish over SSH -> SSH Server    (Add VM IP , where you want to store war file)
+
+Name : VM2 or any
+Hostname : 192.168.0.171
+Username : root (any user like wsadmin)
+Advance:
+Use password authentication, or use a different key ?
+Passphrase / Password : padnet
+
+go down and click on test configurations
+if not success , then do in  VM (192.168.0.171)
+
+vim /etc/ssh/sshd_config
+PasswordAuthentication yes
+
+server sssh reload
+
+and then check again click on test configurations , it will succes
+
+------------------------------------------------------------------------------------
+
+ create a new job 
+guthub URl
+goal:clean install package
+Post-build Actions :
+	Send build artifacts over SSH
+
+Transfers
+Transfer set
+
+Source files : webapp/target/*.war
+Remove prefix : webapp/target
+
+Apply and save and build job
+
+ll /root/webapp.war  in 192.168.0.171 
+
+-----------------------------------------------------------------------------------
+take war project 
+and copy to - under one project name : war-project and create one file with name : Dockerfile
+--------------
+FROM tomcat:9.0.75
+
+MAINTAINER Shubham
+
+COPY .  /usr/local/tomcat/webapps
+-----------------------
+-----------------------
+
+C:\Users\Shubham\Desktop\docker\war-project>docker build -t wartomcat .
+[+] Building 0.3s (7/7) FINISHED
+ => [internal] load build definition from Dockerfile                                                                                                   0.1s
+ => => transferring dockerfile: 114B                                                                                                                   0.0s
+ => [internal] load .dockerignore                                                                                                                      0.1s
+ => => transferring context: 2B                                                                                                                        0.0s
+ => [internal] load metadata for docker.io/library/tomcat:9.0.75                                                                                       0.0s
+ => [internal] load build context                                                                                                                      0.1s
+ => => transferring context: 2.48kB                                                                                                                    0.0s
+ => [1/2] FROM docker.io/library/tomcat:9.0.75                                                                                                         0.1s
+ => [2/2] COPY .  /usr/local/tomcat/webapps                                                                                                            0.0s
+ => exporting to image                                                                                                                                 0.0s
+ => => exporting layers                                                                                                                                0.0s
+ => => writing image sha256:b5967919bb9ac9a9da912daebf20cbcd4cfca689a988cc7faaf91785c6e36505                                                           0.0s
+ => => naming to docker.io/library/wartomcat                                                                                                           0.0s
+
+C:\Users\Shubham\Desktop\docker\war-project>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED          SIZE
+wartomcat         latest       b5967919bb9a   15 seconds ago   476MB
+
+
+
+
+C:\Users\Shubham\Desktop\docker\war-project>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED         STATUS                 PORTS                    NAMES
+3a608c60f4e1   wartomcat                    "catalina.sh run"        5 seconds ago   Up 4 seconds           0.0.0.0:8002->8080/tcp   warcont1
+942ea406711d   tomcat:9.0.75                "catalina.sh run"        4 hours ago     Up 4 hours             0.0.0.0:8888->8080/tcp   tomcatc1
+
+http://192.168.3.95:8002/webapp/
+
+war project output will come display
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

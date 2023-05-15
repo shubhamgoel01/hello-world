@@ -1,0 +1,980 @@
+docker -v
+docker --version
+docker images
+docker search python
+docker run python
+docker ps
+docker ps -a
+docker run --name pythonCont -d 4665a951a37e
+docker run --name=pythonCont1 -it -d python
+
+docker exec -it a42e49a83df7 python3 	  
+container-id a42e49a83df7
+bash/cmd = python3
+
+docker inspect a42e49a83df7
+container-id a42e49a83df7
+
+
+docker pull openjdk
+docker run --name javaCont1 -it -d openjdk
+docker exec -it javaCont1 jshell
+
+
+docker run --name mysqlDB -e MYSQL_ROOT_PASSWORD=root -d mysql
+docker inspect mysqlDB
+
+docker run --name nginxServer -d -p 8080:80 nginx
+http://localhost:8080/
+
+docker pull httpd
+docker images
+docker run --name httpdServer -d -p 8081:80 httpd
+http://localhost:8081/
+docker stop pythonCont1
+docker stop a7a
+docker ps -a
+docker rm e304e1b42813 82f78eef79b4 a42e49a83df7  (container ids 38b82469933b )
+
+TO remove images 
+C:\Users\Shubham>docker rmi  mysql nginx
+
+To Restart /stop container
+docker restart pythonCont1
+docker stop pythonCont1
+
+
+docker login
+docker commit
+docker push
+docker logs
+docker copy
+docker volume
+docker logout
+
+
+C:\Users\Shubham>docker logs pythonCont1
+
+
+#CUstom docker images --------------------------------------------------
+docker file below name - dockerfile
+------------------------------------------
+# base image
+FROM ubuntu
+
+# author name
+MAINTAINER shubham
+
+#update command
+RUN apt update
+
+# start up executable command
+CMD ["echo","this is my first ubuntu images"]
+-------------------------------------
+IN CMD below comamnd , image name -myubuntuimage  , . means - docker file in current location
+C:\Users\Shubham\Desktop\docker\ubuntu-image>docker build -t myubuntuimage .
+
+C:\Users\Shubham\Desktop\docker\ubuntu-image>docker images
+
+	
+C:\Users\Shubham\Desktop\docker\ubuntu-image>docker run --name myUbuntuCont1 myubuntuimage
+this is my first ubuntu images
+
+------------------------ JAVA image-------------------------------
+Filename : Test.java
+
+import java.util.Properties;
+
+class Test{
+
+    public static void printSystemProperties() {
+        System.out.println("printing system properties using java programs");     
+        Properties props=System.getProperties();
+        System.out.println(props);
+    }
+    public static void main(String[] args) {
+        System.out.println("Java Program started ...");    
+        printSystemProperties();
+    }
+}
+--------------------Docker file name : Dockerfile--------------------------------------------------------------------------------------------
+
+FROM openjdk:11
+
+WORKDIR /usr/src/myapp
+
+COPY . /usr/src/myapp
+
+RUN javac Test.java
+
+CMD ["java","Test"]
+-----------------------------------------------------
+C:\Users\Shubham\Desktop\docker\java-project>docker build -t myjavaimage .
+
+C:\Users\Shubham\Desktop\docker\java-project>docker images
+
+C:\Users\Shubham\Desktop\docker\java-project>docker run --name javaproject myjavaimage
+
+
+----------------------------- python project ----------------------------
+
+file name - main.py
+
+print("This is my python project")
+
+def myfun(m1,m2):
+    print("sum is:",(m1+m2))
+    
+myfun(12,14)
+-------------------------------------------------------
+file name - Dockerfile
+
+FROM python 
+WORKDIR /usr/src/myapp
+COPY . /usr/src/myapp
+
+CMD ["python3","main.py"]
+
+--------------------------------------------------------------
+
+C:\Users\Shubham\Desktop\docker\python-project>docker build -t mypythonproject  .
+
+C:\Users\Shubham\Desktop\docker\python-project>docker run --name pythonProject mypythonproject
+This is my python project
+sum is: 26
+
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+########################################################################################################################
+
+https://hub.docker.com/search?q=openjdk
+https://docs.docker.com/desktop/install/windows-install/
+
+in CMD :
+
+1) wsl
+2) wsl --install
+
+After Download and install exe , run below command in CMD
+docker -v
+docker --version
+
+to check if any containers are running we can execute the docker command using the ps option.
+1) docker ps
+CONTAINER ID IMAGE COMMAND CREATED STATUS PORTS NAMES
+
+C:\Users\Shubham>docker pull hello-world
+Using default tag: latest
+latest: Pulling from library/hello-world
+Digest: sha256:4e83453afed1b4fa1a3500525091dbfca6ce1e66903fd4c01ff015dbcb1ba33e
+Status: Image is up to date for hello-world:latest
+docker.io/library/hello-world:latest
+
+
+C:\Users\Shubham>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED         SIZE
+hello-world       latest       feb5d9fea6a5   19 months ago   13.3kB
+
+Search image 
+C:\Users\Shubham>docker search python
+
+Different way to start container , via normal , via arguments ,
+
+C:\Users\Shubham>docker run python
+
+docker ps - default show just running
+docker ps -a = show all container
+
+C:\Users\Shubham>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED      STATUS                 PORTS                    NAMES
+95baf4c00dc2   apache/superset:latest-dev   "/app/docker/docker-…"   5 days ago   Up 2 hours (healthy)   0.0.0.0:8088->8088/tcp   superset_app
+568a8bc20eb7   apache/superset:latest-dev   "/app/docker/docker-…"   5 days ago   Up 2 hours             8088/tcp                 superset_worker_beat
+4e61aa804794   apache/superset:latest-dev   "/app/docker/docker-…"   5 days ago   Up 2 hours (healthy)   8088/tcp                 superset_worker
+d728d37ec6f7   postgres:14                  "docker-entrypoint.s…"   5 days ago   Up 2 hours             5432/tcp                 superset_db
+a9b9d833bce9   redis:7                      "docker-entrypoint.s…"   5 days ago   Up 2 hours             6379/tcp                 superset_cache
+
+C:\Users\Shubham>docker ps -a
+CONTAINER ID   IMAGE                        COMMAND                  CREATED          STATUS                      PORTS                    NAMES
+b55aa88753e7   python                       "python3"                22 seconds ago   Exited (0) 21 seconds ago                            elastic_wilson
+a5573d2b7468   hello-world                  "/hello"                 2 hours ago      Exited (0) 2 hours ago                               wonderful_brattain
+
+
+C:\Users\Shubham>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED         SIZE
+apache/superset   latest-dev   a685fc9e4dcd   5 days ago      1.53GB
+redis             7            eca1379fe8b5   2 weeks ago     117MB
+python            latest       4665a951a37e   2 weeks ago     921MB
+postgres          14           820658bb5c59   2 weeks ago     377MB
+hello-world       latest       feb5d9fea6a5   19 months ago   13.3kB
+
+C:\Users\Shubham>docker run --name pythonContainer -d 4665a951a37e
+docker: Error response from daemon: Conflict. The container name "/pythonContainer" is already in use by container "2a006b6c7176ed8a96b8537db639d678af0afcc43e8bad98b0fa4fd0161f4530". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
+
+C:\Users\Shubham>docker run --name pythonCont -d 4665a951a37e
+f0be8c17e261c120252f8c045d1d4ff660f7c408e071a36b586725ca914b1156
+
+ -d = ditached
+-it = interactive
+
+C:\Users\Shubham>docker ps -a
+CONTAINER ID   IMAGE                        COMMAND                  CREATED          STATUS                     PORTS                    NAMES
+2a006b6c7176   python                       "python3"                10 seconds ago   Exited (0) 9 seconds ago                            pythonContainer
+b55aa88753e7   python                       "python3"                5 minutes ago    Exited (0) 5 minutes ago                            elastic_wilson
+
+
+To run image/container  , earlier we are started , but after that stopped automatically
+
+C:\Users\Shubham>docker run --name=pythonCont1 -it -d python
+a42e49a83df75a0fdbd84f8be910eac69c4a2b5443dd748a3e37d836650a21f5
+
+C:\Users\Shubham>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED         STATUS                 PORTS                    NAMES
+a42e49a83df7   python                       "python3"                4 seconds ago   Up 3 seconds                                    pythonCont1
+
+HOW TO GO INSIDE THE Container 
+
+C:\Users\Shubham>docker exec -it a42e49a83df7 python3
+Python 3.11.3 (main, Apr 12 2023, 14:31:14) [GCC 10.2.1 20210110] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> print("hello");
+hello
+
+
+Docker information  
+(CONTAINER ID   IMAGE
+a42e49a83df7   python)
+
+C:\Users\Shubham>docker inspect a42e49a83df7
+[
+    {
+        "Id": "a42e49a83df75a0fdbd84f8be910eac69c4a2b5443dd748a3e37d836650a21f5",
+        "Created": "2023-05-02T11:11:05.283264112Z",
+        "Path": "python3",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 27143,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2023-05-02T11:11:05.749245935Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:4665a951a37e87c8baf10af65f84973e35de96b9b7263b270f49f5644463c2fe",
+        "ResolvConfPath": "/var/lib/docker/containers/a42e49a83df75a0fdbd84f8be910eac69c4a2b5443dd748a3e37d836650a21f5/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/a42e49a83df75a0fdbd84f8be910eac69c4a2b5443dd748a3e37d836650a21f5/hostname",
+        "HostsPath": "/var/lib/docker/containers/a42e49a83df75a0fdbd84f8be910eac69c4a2b5443dd748a3e37d836650a21f5/hosts",
+        "LogPath": "/var/lib/docker/containers/a42e49a83df75a0fdbd84f8be910eac69c4a2b5443dd748a3e37d836650a21f5/a42e49a83df75a0fdbd84f8be910eac69c4a2b5443dd748a3e37d836650a21f5-json.log",
+        "Name": "/pythonCont1",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "host",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                41,
+                170
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "KernelMemory": 0,
+            "KernelMemoryTCP": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": null,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/326dd136268514b7ec2b674e0b9a170ee6a605103b26ee539dbf0b426d6761e5-init/diff:/var/lib/docker/overlay2/0420dcd377aa592fff8a97df105617e708800b6150c88477562a1acbbb2bd80a/diff:/var/lib/docker/overlay2/5fbc8185bf1bd589b55454881d3e474d4ba3c06d11a7609a7f27ece8ca593de3/diff:/var/lib/docker/overlay2/f8c70a8c46b33e4061dadb5564c73ba00d382f970fc88c79772ec8e53b3032cc/diff:/var/lib/docker/overlay2/e9f734e0d0926f4117211895db94f656fa95ad37c9ed54c791d6bfe402a7962b/diff:/var/lib/docker/overlay2/da921b51ef68615d9df37806fd71aa1bc3b54edc3e8fc7573918c1b51fd9ef5c/diff:/var/lib/docker/overlay2/42c0d171119ec6322aad2d366ab0c90bc36c5c29e8c9d65777fcb957b747d739/diff:/var/lib/docker/overlay2/da582cdbec131ac2ebf803c3be7dd9e04f5b2199dfe5e5c05b6218f7d2ec64c8/diff:/var/lib/docker/overlay2/df7d2ef19195ceb512ce1aff61fc49a036d5c58b356d0f85c72270c10fb25b8b/diff:/var/lib/docker/overlay2/5d794550213d8629372a2e805c2ab3fb55c3d499810bfd31153bd083f485eab3/diff",
+                "MergedDir": "/var/lib/docker/overlay2/326dd136268514b7ec2b674e0b9a170ee6a605103b26ee539dbf0b426d6761e5/merged",
+                "UpperDir": "/var/lib/docker/overlay2/326dd136268514b7ec2b674e0b9a170ee6a605103b26ee539dbf0b426d6761e5/diff",
+                "WorkDir": "/var/lib/docker/overlay2/326dd136268514b7ec2b674e0b9a170ee6a605103b26ee539dbf0b426d6761e5/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "a42e49a83df7",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D",
+                "PYTHON_VERSION=3.11.3",
+                "PYTHON_PIP_VERSION=22.3.1",
+                "PYTHON_SETUPTOOLS_VERSION=65.5.1",
+                "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/d5cb0afaf23b8520f1bbcfed521017b4a95f5c01/public/get-pip.py",
+                "PYTHON_GET_PIP_SHA256=394be00f13fa1b9aaa47e911bdb59a09c3b2986472130f30aa0bfaf7f3980637"
+            ],
+            "Cmd": [
+                "python3"
+            ],
+            "Image": "python",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "6d251450c64f15602ebc7194dba117f07e6726160f9105e170660f6d8f5ff02d",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/6d251450c64f",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "6109929c6a320d6ae2676fe1f1e30bf149411abc2551c1662768572a81df9e26",
+            "Gateway": "172.17.0.1",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "172.17.0.2",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "MacAddress": "02:42:ac:11:00:02",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "d4a3a89e5b0f902a960fdc98efc6b2a9d17ca07725e77934d30c026d68a143fc",
+                    "EndpointID": "6109929c6a320d6ae2676fe1f1e30bf149411abc2551c1662768572a81df9e26",
+                    "Gateway": "172.17.0.1",
+                    "IPAddress": "172.17.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:11:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
+
+
+
+C:\Users\Shubham>docker pull openjdk
+Using default tag: latest
+latest: Pulling from library/openjdk
+197c1adcd755: Pull complete
+57b698b7af4b: Pull complete
+95a27dbe0150: Pull complete
+Digest: sha256:9b448de897d211c9e0ec635a485650aed6e28d4eca1efbc34940560a480b3f1f
+Status: Downloaded newer image for openjdk:latest
+docker.io/library/openjdk:latest
+
+C:\Users\Shubham>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED         SIZE
+apache/superset   latest-dev   a685fc9e4dcd   5 days ago      1.53GB
+redis             7            eca1379fe8b5   2 weeks ago     117MB
+python            latest       4665a951a37e   2 weeks ago     921MB
+postgres          14           820658bb5c59   2 weeks ago     377MB
+openjdk           latest       71260f256d19   2 months ago    470MB
+hello-world       latest       feb5d9fea6a5   19 months ago   13.3kB
+
+C:\Users\Shubham>docker run --name javaCont1 -it -d openjdk
+82f78eef79b4b48b1d58a7d56892ea6b1ea897ffd435ffe4fd412a4763ab5bce
+
+C:\Users\Shubham>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED          STATUS                 PORTS                    NAMES
+82f78eef79b4   openjdk                      "jshell"                 25 seconds ago   Up 24 seconds                                   javaCont1
+a42e49a83df7   python                       "python3"                52 minutes ago   Up 52 minutes                                   pythonCont1
+
+
+C:\Users\Shubham>docker exec -it javaCont1 jshell
+|  Welcome to JShell -- Version 18.0.2.1
+|  For an introduction type: /help intro
+
+jshell> System.out.println("this is testing")
+this is testing
+
+jshell> /exit
+|  Goodbye
+
+
+C:\Users\Shubham>docker run --name mysqlDB -e MYSQL_ROOT_PASSWORD=root -d mysql
+e304e1b428139d5fbef4f63e0600cd723549c55878abfef01ac521ca3078f3e7
+
+C:\Users\Shubham>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED             STATUS                 PORTS                    NAMES
+e304e1b42813   mysql                        "docker-entrypoint.s…"   9 seconds ago       Up 8 seconds           3306/tcp, 33060/tcp
+
+
+C:\Users\Shubham>docker inspect mysqlDB
+
+C:\Users\Shubham>docker exec -it mysqlDB bash
+bash-4.4# mysql -p 				(or password is root, when we start container that time we enter password root)
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.33 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.01 sec)
+
+mysql> use mydb;
+ERROR 1049 (42000): Unknown database 'mydb'
+mysql> exit
+Bye
+bash-4.4# exit
+exit
+
+#NGINX server
+C:\Users\Shubham>docker run --name nginxServer -d -p 8080:80 nginx
+a7a78f84bf0108e89d20fc9b03a6fb6ac8b227295eadc97dbd028b36e190e4bb
+
+C:\Users\Shubham>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED          STATUS                 PORTS                    NAMES
+a7a78f84bf01   nginx                        "/docker-entrypoint.…"   6 seconds ago    Up 5 seconds           0.0.0.0:8080->80/tcp     nginxServer
+e304e1b42813   mysql                        "docker-entrypoint.s…"   11 minutes ago   Up 11 minutes          3306/tcp, 33060/tcp      mysqlDB
+82f78eef79b4   openjdk                      "jshell"                 2 hours ago      Up 2 hours                                      javaCont1
+a42e49a83df7   python                       "python3"                2 hours ago      Up 2 hours                                      pythonCont1
+
+
+on browser
+http://localhost:8080/
+
+Welcome to nginx!
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+
+
+# HTTPD
+
+
+C:\Users\Shubham>docker pull httpd
+Using default tag: latest
+latest: Pulling from library/httpd
+26c5c85e47da: Already exists
+2d29d3837df5: Pull complete
+2483414a5e59: Pull complete
+e78016c4ba87: Pull complete
+757908175415: Pull complete
+Digest: sha256:a182ef2350699f04b8f8e736747104eb273e255e818cd55b6d7aa50a1490ed0c
+Status: Downloaded newer image for httpd:latest
+docker.io/library/httpd:latest
+
+C:\Users\Shubham>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED         SIZE
+apache/superset   latest-dev   a685fc9e4dcd   5 days ago      1.53GB
+redis             7            eca1379fe8b5   2 weeks ago     117MB
+mysql             latest       8189e588b0e8   2 weeks ago     564MB
+nginx             latest       6efc10a0510f   2 weeks ago     142MB
+python            latest       4665a951a37e   2 weeks ago     921MB
+postgres          14           820658bb5c59   2 weeks ago     377MB
+httpd             latest       4b7fc736cb48   2 weeks ago     145MB
+openjdk           latest       71260f256d19   2 months ago    470MB
+hello-world       latest       feb5d9fea6a5   19 months ago   13.3kB
+
+C:\Users\Shubham>docker run --name httpdServer -d -p 8081:80 httpd
+38b82469933bde384fac7902242a76dcb1461b61e3543686a50e2a8ed7c6338d
+
+
+C:\Users\Shubham>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED          STATUS                 PORTS                    NAMES
+38b82469933b   httpd                        "httpd-foreground"       20 seconds ago   Up 19 seconds          0.0.0.0:8081->80/tcp     httpdServer
+
+on browser
+http://localhost:8081/
+
+TO stop container 
+C:\Users\Shubham>docker stop pythonCont1
+pythonCont1
+
+docker stop pythonCont1/ docker stop container_ID / docker stop starting_docKer_id no need full ie
+C:\Users\Shubham>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED         STATUS                 PORTS                    NAMES
+38b82469933b   httpd                        "httpd-foreground"       2 minutes ago   Up 2 minutes           0.0.0.0:8081->80/tcp     httpdServer
+a7a78f84bf01   nginx                        "/docker-entrypoint.…"   5 minutes ago   Up 5 minutes           0.0.0.0:8080->80/tcp     nginxServer
+
+C:\Users\Shubham>docker stop a7a
+a7a
+
+After STOP the container , can see in 
+
+C:\Users\Shubham>docker ps -a
+
+from there we can also remove by using
+
+C:\Users\Shubham>docker rm e304e1b42813 82f78eef79b4 a42e49a83df7  (container ids 38b82469933b )
+
+
+
+
+TO remove images 
+C:\Users\Shubham>docker rmi  mysql nginx
+Untagged: mysql:latest
+Untagged: mysql@sha256:a43f6e7e7f3a5e5b90f857fbed4e3103ece771b19f0f75880f767cf66bbb6577
+Deleted: sha256:8189e588b0e8fcc95b0d764d6f7bdb55b5b41e9249157177d73781058f603ca9
+Deleted: sha256:48c450c06ed83938e899fb0b77b2e9e35094015b503bb5e88de6c2d93f445241
+Deleted: sha256:c5d77efb49ec3a7a74ab898b9da9217ec78fa9bee47018409025467611d60329
+Deleted: sha256:de0c00e28b37cc33347f02709e0a6a2f17637b1e761fb96616861ed345bd34f6
+Deleted: sha256:cc635684e233946f93fe008e0322c86e15cbb97b56c58d269a5f8f9da15d973d
+Deleted: sha256:0b795b85d567512d79a544b1b74f21108339156cbbc78d16921e96a2a69f687b
+Deleted: sha256:16e250c36f4c0e1085512653edd47fd03b60d230ddb575aabc8eb224d96e668f
+Deleted: sha256:d023b92a46a5fa8fa8d54387e6d3cb0c73997fefc64ec9000eab0ee1c550ef45
+Deleted: sha256:f1c1643119168a94089eab1c9126cda0ee6056a4bb4b18e27a7dcacdf4823972
+Deleted: sha256:b147319dd21e8994e6d2fb3bb58a8278c5a72f39488e1f1cff94fc73f1089eb9
+Deleted: sha256:ff7c2b28c0dfaa63d0d30b7a5069bf526b0f6492143110381351bbf7d07b4baf
+Deleted: sha256:caefa4e45110eab274ebbdbc781f9227229f947f8718cee62ebeff1aac8f1d5b
+Untagged: nginx:latest
+Untagged: nginx@sha256:63b44e8ddb83d5dd8020327c1f40436e37a6fffd3ef2498a6204df23be6e7e94
+Deleted: sha256:6efc10a0510f143a90b69dc564a914574973223e88418d65c1f8809e08dc0a1f
+Deleted: sha256:a489ce38666d5aff5d73930d115381b154a503b48c5534357d5183160f5b9bfa
+Deleted: sha256:ce2a611250a8bb55b73959de5865489d566bf48e1342c74b46b107e9a224370e
+Deleted: sha256:fa6c51798227fd451cc3ff628c46c1b62c0d1d08e43374be7000c78ad910c0c0
+Deleted: sha256:c426467d564c8684df87356eb045dc50d8b5af9521e9775c1b6bb941135680de
+Deleted: sha256:c6deada06ccd386201e5b95c38e19297cd3eeb5264d6413d9cc7441020816401
+
+C:\Users\Shubham>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED         SIZE
+apache/superset   latest-dev   a685fc9e4dcd   5 days ago      1.53GB
+redis             7            eca1379fe8b5   2 weeks ago     117MB
+python            latest       4665a951a37e   2 weeks ago     921MB
+postgres          14           820658bb5c59   2 weeks ago     377MB
+httpd             latest       4b7fc736cb48   2 weeks ago     145MB
+openjdk           latest       71260f256d19   2 months ago    470MB
+hello-world       latest       feb5d9fea6a5   19 months ago   13.3kB
+
+
+
+To Restart /stop container
+
+docker restart pythonCont1
+docker stop pythonCont1
+
+
+docker login
+docker commit
+docker push
+docker logs
+docker copy
+docker volume
+docker logout
+
+
+C:\Users\Shubham>docker logs pythonCont1
+Python 3.11.3 (main, Apr 12 2023, 14:31:14) [GCC 10.2.1 20210110] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> Python 3.11.3 (main, Apr 12 2023, 14:31:14) [GCC 10.2.1 20210110] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> Python 3.11.3 (main, Apr 12 2023, 14:31:14) [GCC 10.2.1 20210110] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+
+
+
+#CUstom docker images --------------------------------------------------
+docker file below name - dockerfile
+------------------------------------------
+# base image
+FROM ubuntu
+
+# author name
+MAINTAINER shubham
+
+#update command
+RUN apt update
+
+# start up executable command
+CMD ["echo","this is my first ubuntu images"]
+-------------------------------------
+IN CMD below comamnd , image name -myubuntuimage  , . means - docker file in current location
+C:\Users\Shubham\Desktop\docker\ubuntu-image>docker build -t myubuntuimage .
+[+] Building 7.3s (5/5) FINISHED
+ => [internal] load build definition from Dockerfile                                                                                                   0.0s
+ => => transferring dockerfile: 133B                                                                                                                   0.0s
+ => [internal] load .dockerignore                                                                                                                      0.0s
+ => => transferring context: 2B                                                                                                                        0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                       3.8s
+ => [1/2] FROM docker.io/library/ubuntu@sha256:dfd64a3b4296d8c9b62aa3309984f8620b98d87e47492599ee20739e8eb54fbf                                        3.0s
+ => => resolve docker.io/library/ubuntu@sha256:dfd64a3b4296d8c9b62aa3309984f8620b98d87e47492599ee20739e8eb54fbf                                        0.0s
+ => => sha256:dfd64a3b4296d8c9b62aa3309984f8620b98d87e47492599ee20739e8eb54fbf 1.13kB / 1.13kB                                                         0.0s
+ => => sha256:ca5534a51dd04bbcebe9b23ba05f389466cf0c190f1f8f182d7eea92a9671d00 424B / 424B                                                             0.0s
+ => => sha256:3b418d7b466ac6275a6bfcb0c86fbe4422ff6ea0af444a294f82d3bf5173ce74 2.30kB / 2.30kB                                                         0.0s
+ => => sha256:dbf6a9befcdeecbb8813406afbd62ce81394e3869d84599f19f941aa5c74f3d1 29.53MB / 29.53MB                                                       1.8s
+ => => extracting sha256:dbf6a9befcdeecbb8813406afbd62ce81394e3869d84599f19f941aa5c74f3d1                                                              1.0s
+ => ERROR [2/2] RUN apt-update                                                                                                                         0.5s
+------
+ > [2/2] RUN apt-update:
+#0 0.404 /bin/sh: 1: apt-update: not found
+------
+Dockerfile:4
+--------------------
+   2 |     MAINTAINER shubham
+   3 |
+   4 | >>> RUN apt-update
+   5 |     CMD ["echo","this is my first ubuntu images"]
+--------------------
+ERROR: failed to solve: process "/bin/sh -c apt-update" did not complete successfully: exit code: 127
+
+C:\Users\Shubham\Desktop\docker\ubuntu-image>docker build -t myubuntuimage .
+[+] Building 19.9s (6/6) FINISHED
+ => [internal] load build definition from Dockerfile                                                                                                   0.0s
+ => => transferring dockerfile: 133B                                                                                                                   0.0s
+ => [internal] load .dockerignore                                                                                                                      0.0s
+ => => transferring context: 2B                                                                                                                        0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                                                       1.1s
+ => CACHED [1/2] FROM docker.io/library/ubuntu@sha256:dfd64a3b4296d8c9b62aa3309984f8620b98d87e47492599ee20739e8eb54fbf                                 0.0s
+ => [2/2] RUN apt update                                                                                                                              18.5s
+ => exporting to image                                                                                                                                 0.2s
+ => => exporting layers                                                                                                                                0.2s
+ => => writing image sha256:1cf3c40d1017ad4a40d8248acec335a83e66e5d2fba87ea739beebdb8fff55a2                                                           0.0s
+ => => naming to docker.io/library/myubuntuimage                                                                                                       0.0s
+
+C:\Users\Shubham\Desktop\docker\ubuntu-image>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED          SIZE
+myubuntuimage     latest       1cf3c40d1017   13 seconds ago   122MB
+apache/superset   latest-dev   a685fc9e4dcd   11 days ago      1.53GB
+redis             7            eca1379fe8b5   2 weeks ago      117MB
+python            latest       4665a951a37e   3 weeks ago      921MB
+postgres          14           820658bb5c59   3 weeks ago      377MB
+
+	
+C:\Users\Shubham\Desktop\docker\ubuntu-image>docker run --name myUbuntuCont1 myubuntuimage
+this is my first ubuntu images
+
+
+
+------------------------ JAVA image-------------------------------
+Filename : Test.java
+
+import java.util.Properties;
+
+class Test{
+
+    public static void printSystemProperties() {
+        System.out.println("printing system properties using java programs");     
+        Properties props=System.getProperties();
+        System.out.println(props);
+    }
+    public static void main(String[] args) {
+        System.out.println("Java Program started ...");    
+        printSystemProperties();
+    }
+}
+--------------------Docker file name : Dockerfile--------------------------------------------------------------------------------------------
+
+FROM openjdk:11
+
+WORKDIR /usr/src/myapp
+
+COPY . /usr/src/myapp
+
+RUN javac Test.java
+
+CMD ["java","Test"]
+
+
+
+
+
+C:\Users\Shubham\Desktop\docker\java-project>docker build -t myjavaimage .
+[+] Building 3.3s (9/9) FINISHED
+ => [internal] load .dockerignore                                                                                                                      0.0s
+ => => transferring context: 2B                                                                                                                        0.0s
+ => [internal] load build definition from Dockerfile                                                                                                   0.0s
+ => => transferring dockerfile: 149B                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/openjdk:11                                                                                          2.2s
+ => [internal] load build context                                                                                                                      0.0s
+ => => transferring context: 612B                                                                                                                      0.0s
+ => [1/4] FROM docker.io/library/openjdk:11@sha256:99bac5bf83633e3c7399aed725c8415e7b569b54e03e4599e580fc9cdb7c21ab                                    0.0s
+ => CACHED [2/4] WORKDIR /usr/src/myapp                                                                                                                0.0s
+ => [3/4] COPY . /usr/src/myapp                                                                                                                        0.0s
+ => [4/4] RUN javac Test.java                                                                                                                          0.9s
+ => exporting to image                                                                                                                                 0.1s
+ => => exporting layers                                                                                                                                0.0s
+ => => writing image sha256:ff65b432c33af9fafdd645f1ce264610c54ff9ad1af049f11029eaee452569cc                                                           0.0s
+ => => naming to docker.io/library/myjavaimage                                                                                                         0.0s
+
+C:\Users\Shubham\Desktop\docker\java-project>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED             SIZE
+myjavaimage       latest       ff65b432c33a   15 minutes ago      654MB
+
+
+
+
+
+C:\Users\Shubham\Desktop\docker\java-project>docker run --name javaproject myjavaimage
+Java Program started ...
+printing system properties using java programs
+{awt.toolkit=sun.awt.X11.XToolkit, java.specification.version=11, sun.cpu.isalist=, sun.jnu.encoding=UTF-8, java.class.path=., java.vm.vendor=Oracle Corporation, sun.arch.data.model=64, java.vendor.url=https://openjdk.java.net/, user.timezone=, os.name=Linux, java.vm.specification.version=11, sun.java.launcher=SUN_STANDARD, sun.boot.library.path=/usr/local/openjdk-11/lib, sun.java.command=Test, jdk.debug=release, sun.cpu.endian=little, user.home=/root, user.language=en, java.specification.vendor=Oracle Corporation, java.version.date=2022-07-19, java.home=/usr/local/openjdk-11, file.separator=/, java.vm.compressedOopsMode=32-bit, line.separator=
+, java.specification.name=Java Platform API Specification, java.vm.specification.vendor=Oracle Corporation, java.awt.graphicsenv=sun.awt.X11GraphicsEnvironment, sun.management.compiler=HotSpot 64-Bit Tiered Compilers, java.runtime.version=11.0.16+8, user.name=root, path.separator=:, os.version=5.15.90.1-microsoft-standard-WSL2, java.runtime.name=OpenJDK Runtime Environment, file.encoding=UTF-8, java.vm.name=OpenJDK 64-Bit Server VM, java.vendor.version=18.9, java.vendor.url.bug=https://bugreport.java.com/bugreport/, java.io.tmpdir=/tmp, java.version=11.0.16, user.dir=/usr/src/myapp, os.arch=amd64, java.vm.specification.name=Java Virtual Machine Specification, java.awt.printerjob=sun.print.PSPrinterJob, sun.os.patch.level=unknown, java.library.path=/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib, java.vm.info=mixed mode, sharing, java.vendor=Oracle Corporation, java.vm.version=11.0.16+8, sun.io.unicode.encoding=UnicodeLittle, java.class.version=55.0}
+0
+
+----------------------------- python project ----------------------------
+
+file name - main.py
+
+print("This is my python project")
+
+def myfun(m1,m2):
+    print("sum is:",(m1+m2))
+    
+myfun(12,14)
+-------------------------------------------------------
+file name - Dockerfile
+
+FROM python 
+WORKDIR /usr/src/myapp
+COPY . /usr/src/myapp
+
+CMD ["python3","main.py"]
+
+--------------------------------------------------------------
+
+C:\Users\Shubham\Desktop\docker\python-project>docker build -t mypythonproject  .
+[+] Building 0.3s (8/8) FINISHED
+ => [internal] load .dockerignore                                                                                                                      0.0s
+ => => transferring context: 2B                                                                                                                        0.0s
+ => [internal] load build definition from Dockerfile                                                                                                   0.0s
+ => => transferring dockerfile: 125B                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/python:latest                                                                                       0.0s
+ => [1/3] FROM docker.io/library/python                                                                                                                0.1s
+ => [internal] load build context                                                                                                                      0.1s
+ => => transferring context: 266B                                                                                                                      0.0s
+ => [2/3] WORKDIR /usr/src/myapp                                                                                                                       0.0s
+ => [3/3] COPY . /usr/src/myapp                                                                                                                        0.0s
+ => exporting to image                                                                                                                                 0.0s
+ => => exporting layers                                                                                                                                0.0s
+ => => writing image sha256:48ca31b706d58daf045b01baa204b1e2926f1d4f5eb1d5f8c09bcfa187b9d687                                                           0.0s
+ => => naming to docker.io/library/mypythonproject
+
+
+
+
+C:\Users\Shubham\Desktop\docker\python-project>docker run --name pythonProject mypythonproject
+This is my python project
+sum is: 26
+
+
+------------------------------------- Boot project ----------------------
+ Directory of C:\Users\Shubham\Desktop\docker\boot-project
+
+10-05-2023  16:14    <DIR>          .
+10-05-2023  16:13    <DIR>          ..
+10-05-2023  16:19               129 Dockerfile
+10-05-2023  12:23             4,814 mavenproject8-1.0-SNAPSHOT.war
+------------------------------------------------------------------------------
+File_name - Dockerfile
+
+FROM openjdk
+WORKDIR /usr/src/myapp
+COPY . /usr/src/myapp
+
+CMD ["jar","-jar","mavenproject8-1.0-SNAPSHOT.war"]
+
+EXPOSE 8082
+-----------------------------------------------------------------
+-----------------------------------------------------------------
+
+C:\Users\Shubham\Desktop\docker\boot-project>docker build -t bootimage .
+[+] Building 112.3s (8/8) FINISHED
+ => [internal] load .dockerignore                                                                                                                      0.1s
+ => => transferring context: 2B                                                                                                                        0.0s
+ => [internal] load build definition from Dockerfile                                                                                                   0.1s
+ => => transferring dockerfile: 168B                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/openjdk:latest                                                                                      4.4s
+ => [1/3] FROM docker.io/library/openjdk@sha256:9b448de897d211c9e0ec635a485650aed6e28d4eca1efbc34940560a480b3f1f                                     107.3s
+ => => resolve docker.io/library/openjdk@sha256:9b448de897d211c9e0ec635a485650aed6e28d4eca1efbc34940560a480b3f1f                                       0.0s
+ => => sha256:71260f256d19f4ae5c762601e5301418d2516ca591103b1376f063be0b7ba056 4.46kB / 4.46kB                                                         0.0s
+ => => sha256:197c1adcd755131915cd019bdd58658d44445b3638f65449932c18ee39b6047c 44.56MB / 44.56MB                                                      46.8s
+ => => sha256:57b698b7af4b18900b53c768746b1dfb603dfb9aec1eea328fdac86d37001e2a 12.26MB / 12.26MB                                                       8.1s
+ => => sha256:95a27dbe0150755fca4304b4afd0d7d6dd6a40ede6fdb30da8568e9e8cdf23a9 188.74MB / 188.74MB                                                   102.9s
+ => => sha256:9b448de897d211c9e0ec635a485650aed6e28d4eca1efbc34940560a480b3f1f 1.04kB / 1.04kB                                                         0.0s
+ => => sha256:fe05457a5e9b9403f8e72eeba507ae80a4237d2d2d3f219fa62ceb128482a9ee 954B / 954B                                                             0.0s
+ => => extracting sha256:197c1adcd755131915cd019bdd58658d44445b3638f65449932c18ee39b6047c                                                              4.5s
+ => => extracting sha256:57b698b7af4b18900b53c768746b1dfb603dfb9aec1eea328fdac86d37001e2a                                                              1.4s
+ => => extracting sha256:95a27dbe0150755fca4304b4afd0d7d6dd6a40ede6fdb30da8568e9e8cdf23a9                                                              4.1s
+ => [internal] load build context                                                                                                                      0.0s
+ => => transferring context: 5.04kB                                                                                                                    0.0s
+ => [2/3] WORKDIR /usr/src/myapp                                                                                                                       0.3s
+ => [3/3] COPY . /usr/src/myapp                                                                                                                        0.1s
+ => exporting to image                                                                                                                                 0.1s
+ => => exporting layers                                                                                                                                0.0s
+ => => writing image sha256:c4641f627d7c17dc64932df97da4d1c529a57f7bad1fa1e40f45934d9573a265                                                           0.0s
+ => => naming to docker.io/library/bootimage
+
+
+C:\Users\Shubham\Desktop\docker\boot-project>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED          SIZE
+bootimage         latest       c4641f627d7c   28 minutes ago   470MB
+
+
+C:\Users\Shubham\Desktop\docker\boot-project>docker run --name bootProject -it -d bootimage
+6022c7c28ba961b14465106dff216c935a7352a0a9ff75a77353a03b19a80fd3
+---------------------------------------------------------------
+----------------------------------------------------------------
+--------------------------------------------------------------
+---------------------------------------------------------------
+---------------------war project ------------------------------
+take war project 
+and copy to - under one project name : war-project and create one file with name : Dockerfile
+--------------
+FROM tomcat:9.0.75
+
+MAINTAINER Shubham
+
+COPY .  /usr/local/tomcat/webapps
+-----------------------
+
+C:\Users\Shubham\Desktop\docker\war-project>docker build -t wartomcat .
+[+] Building 0.3s (7/7) FINISHED
+ => [internal] load build definition from Dockerfile                                                                                                   0.1s
+ => => transferring dockerfile: 114B                                                                                                                   0.0s
+ => [internal] load .dockerignore                                                                                                                      0.1s
+ => => transferring context: 2B                                                                                                                        0.0s
+ => [internal] load metadata for docker.io/library/tomcat:9.0.75                                                                                       0.0s
+ => [internal] load build context                                                                                                                      0.1s
+ => => transferring context: 2.48kB                                                                                                                    0.0s
+ => [1/2] FROM docker.io/library/tomcat:9.0.75                                                                                                         0.1s
+ => [2/2] COPY .  /usr/local/tomcat/webapps                                                                                                            0.0s
+ => exporting to image                                                                                                                                 0.0s
+ => => exporting layers                                                                                                                                0.0s
+ => => writing image sha256:b5967919bb9ac9a9da912daebf20cbcd4cfca689a988cc7faaf91785c6e36505                                                           0.0s
+ => => naming to docker.io/library/wartomcat                                                                                                           0.0s
+
+C:\Users\Shubham\Desktop\docker\war-project>docker images
+REPOSITORY        TAG          IMAGE ID       CREATED          SIZE
+wartomcat         latest       b5967919bb9a   15 seconds ago   476MB
+
+
+
+
+C:\Users\Shubham\Desktop\docker\war-project>docker ps
+CONTAINER ID   IMAGE                        COMMAND                  CREATED         STATUS                 PORTS                    NAMES
+3a608c60f4e1   wartomcat                    "catalina.sh run"        5 seconds ago   Up 4 seconds           0.0.0.0:8002->8080/tcp   warcont1
+942ea406711d   tomcat:9.0.75                "catalina.sh run"        4 hours ago     Up 4 hours             0.0.0.0:8888->8080/tcp   tomcatc1
+
+http://192.168.3.95:8002/webapp/
+
+war project output will come display 
+............
+---------------------------------------------------------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+---------------------------------------------------------------
+---------------------------------------------------------------
