@@ -345,7 +345,9 @@ it success
 But in real scenerio we have to deploy war file into many ansible target host. 
 So we will use Docker Hub , we will store image into docker hub (centralized) rather then into create into one VM / local , so that target system pull images from docker_hub
 --------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------
 NOW Docker HUB Integration with Ansible
+--------------------------------------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------------------------------------
 docker tag local-image:tagname new-repo:tagname 		docker tag simple-devops-image  shubham1921/simple-devops-image   		NOTE: username -> shubham1921
 docker push new-repo:tagname						docker push shubahm1921/simple-devops-image
@@ -478,8 +480,72 @@ git -----> jenkins --------------> Ansible
 
 
 
+------------------------------------------------------------------------------------------------
+# First playbook that run on Ansible server to create build image and push to docker hub
+------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
+tagging Docker images using Ansible -Plabook
 -------------------------------------------------------------------------------------
+
+
+[root@VM3 dock]# ll
+total 20
+-rw-r--r-- 1 root root   74 May 15 21:51 Dockerfile
+-rw-r--r-- 1 root root  302 May 15 22:46 docker_image.yml
+-rw-r--r-- 1 root root  328 May 15 22:45 docker_image.yml-bkp
+-rw-r--r-- 1 root root  593 May 17 01:30 push2dockerhub.yml
+-rw-r--r-- 1 root root 2323 May 16 22:16 webapp.war
+
+
+[root@VM3 dock]# cat push2dockerhub.yml
+---
+- name: create docker image and push to docker-hub
+  hosts: all
+  user: root
+  become: true
+  tasks:
+  - name: create docker image
+    command: docker build -t simple-devops-image /opt/dock/.
+
+  - name: tagging the local docker image
+    command: "docker tag simple-devops-image:latest  shubham1921/simple-devops-image"
+
+  - name:  push docker image tp docker hub
+    command: "docker push shubham1921/simple-devops-image:latest"
+
+  - name:  remove docker image from local
+    command: "docker rmi simple-devops-image:latest shubham1921/simple-devops-image:latest"
+    ignore_errors: true
+
+
+
+[root@VM3 dock]# ansible-playbook  push2dockerhub.yml
+
+PLAY [create docker image and push to docker-hub] *******************************************************************************************************************************************
+
+TASK [Gathering Facts] **********************************************************************************************************************************************************************
+[WARNING]: Platform linux on host 192.168.2.112 is using the discovered Python interpreter at /usr/bin/python, but future installation of another Python interpreter could change this. See
+https://docs.ansible.com/ansible/2.9/reference_appendices/interpreter_discovery.html for more information.
+ok: [192.168.2.112]
+
+TASK [create docker image] ******************************************************************************************************************************************************************
+changed: [192.168.2.112]
+
+TASK [tagging the local docker image] *******************************************************************************************************************************************************
+changed: [192.168.2.112]
+
+TASK [push docker image tp docker hub] ******************************************************************************************************************************************************
+changed: [192.168.2.112]
+
+TASK [remove docker image from local] *******************************************************************************************************************************************************
+changed: [192.168.2.112]
+
+PLAY RECAP **********************************************************************************************************************************************************************************
+192.168.2.112              : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+
+
 
 
 
