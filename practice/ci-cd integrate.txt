@@ -585,8 +585,19 @@ total 24
     
  
  Access the docker container : http://192.168.2.112:8080/webapp/
+ 
+ [root@VM3 dock]# docker images
+REPOSITORY                        TAG       IMAGE ID       CREATED       SIZE
+shubham1921/simple-devops-image   latest    52ab331e81fd   2 hours ago   476MB
+[root@VM3 dock]# docker ps -a
+CONTAINER ID   IMAGE                                    COMMAND             CREATED         STATUS         PORTS                                       NAMES
+1c7b06620e69   shubham1921/simple-devops-image:latest   "catalina.sh run"   5 minutes ago   Up 5 minutes   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp   simple-devops-container
 
 
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
 
 
 
