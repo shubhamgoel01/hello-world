@@ -621,8 +621,10 @@ Send build artifacts over SSH : select server where ansible playbook are : Ansib
 Source files : webapp/target/*.war
 Remove prefix : webapp/target/
 Remote directory: //opt//dock
-Exec command : cd  /opt/dock ;ansible-playbook  push2dockerhub.yml ; ansible-playbook pullfromdocker.yml
-
+Exec command : cd  /opt/dock ;ansible-playbook  push2dockerhub.yml --limit 192.168.0.139 (server1); ansible-playbook pullfromdocker.yml --limit 192.168.0.139(target host/server2)
+OR 
+Exec command : cd  /opt/dock ;ansible-playbook  push2dockerhub.yml ; ansible-playbook pullfromdocker.yml 
+NOTE : check where you want to run playbook , just add the IP with --limit
 save and build the job
 
 NOTE : First try to use below command to test server with out password , else generate key-gen and save the key to other VM
