@@ -595,7 +595,25 @@ CONTAINER ID   IMAGE                                    COMMAND             CREA
 
 
 ------------------------------------------------------------------------------------------------
+# Let say ansible run on server1 and docker on server2 , we want to run playbook1 (to build image ) on server1 and 
+want to run playbook2 (to create container) on server2 , but in our host file of ansible: many host available 
+like : 
+[root@VM3 dock]# cat /etc/ansible/hosts
+192.168.2.112
+192.168.3.207
+#192.168.0.139
+
+so we can restrict using below comamnd to run playbook on 1st server 
+[root@VM3 dock]# ansible-playbook  docker_image.yml --limit 192.168.2.112 	for build image (playbook1 on server1 where ansible server )
+
+[root@VM3 dock]# ansible-playbook  docker_image.yml --limit 192.168.3.207	for container (playbook2) on server2,3  , target hosts
 ------------------------------------------------------------------------------------------------
+
+
+
+
+
+
 ------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------
 
