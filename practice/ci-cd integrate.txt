@@ -343,7 +343,7 @@ total 16
 it success
 (Currently using Jenkins we build and deploy war file into another VM (In that VM - Docker/Ansible running ) , and we are using ansible to build image and run docker container)
 But in real scenerio we have to deploy war file into many ansible target host. 
-So we will use Docker Hub , we will store image into docker hub rather then into create into one VM
+So we will use Docker Hub , we will store image into docker hub (centralized) rather then into create into one VM / local , so that target system pull images from docker_hub
 --------------------------------------------------------------------------------------------------------------------------------
 NOW Docker HUB Integration with Ansible
 --------------------------------------------------------------------------------------------------------------------------------
