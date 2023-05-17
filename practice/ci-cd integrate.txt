@@ -347,6 +347,115 @@ So we will use Docker Hub , we will store image into docker hub (centralized) ra
 --------------------------------------------------------------------------------------------------------------------------------
 NOW Docker HUB Integration with Ansible
 --------------------------------------------------------------------------------------------------------------------------------
+docker tag local-image:tagname new-repo:tagname 		docker tag simple-devops-image  shubham1921/simple-devops-image   		NOTE: username -> shubham1921
+docker push new-repo:tagname						docker push shubahm1921/simple-devops-image
+Make sure to change tagname with your desired image repository tag.
+ 
+
+[root@VM3 dock]# docker images
+REPOSITORY            TAG       IMAGE ID       CREATED         SIZE
+simple-devops-image   latest    0d141472ea41   4 minutes ago   476MB
+[root@VM3 dock]#
+[root@VM3 dock]#
+[root@VM3 dock]# docker tag simple-devops-image  shubham1921/simple-devops-image
+[root@VM3 dock]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED         SIZE
+simple-devops-image           latest    0d141472ea41   4 minutes ago   476MB
+shubahm/simple-devops-image   latest    0d141472ea41   4 minutes ago   476MB
+[root@VM3 dock]#
+[root@VM3 dock]#
+[root@VM3 dock]# docker push shubahm1921/simple-devops-image
+Using default tag: latest
+The push refers to repository [docker.io/shubahm/simple-devops-image]
+771ab070c5d3: Preparing
+3e3d3d978b9b: Preparing
+817f175f3d94: Preparing
+74d620724878: Preparing
+57b27cfbd6e6: Preparing
+b421f864ecf0: Waiting
+b09de1b6a666: Waiting
+b8a36d10656a: Waiting
+denied: requested access to the resource is denied
+
+shubham1921/Shubham1921
+
+[root@VM3 dock]# docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: shubham1921
+Password:
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+
+
+
+[root@VM3 dock]# docker tag simple-devops-image  shubham1921/simple-devops-image
+[root@VM3 dock]# docker push shubham1921/simple-devops-image
+Using default tag: latest
+The push refers to repository [docker.io/shubham1921/simple-devops-image]
+771ab070c5d3: Pushed
+3e3d3d978b9b: Pushed
+817f175f3d94: Pushed
+74d620724878: Pushed
+57b27cfbd6e6: Pushed
+b421f864ecf0: Pushed
+b09de1b6a666: Pushed
+b8a36d10656a: Pushed
+latest: digest: sha256:3d263dd15d21ae582865b9d0052615df18d5415fefebe53bc155af384804954d size: 1996
+
+
+-------------------------------------------------------------------------------------
+-->  NOw we can check our custom image into Docker hub
+#  Now delete image from local and pull that image from docker hub to local
+-------------------------------------------------------------------------------------
+
+[root@VM3 dock]# docker rmi shubham1921/simple-devops-image
+Untagged: shubham1921/simple-devops-image:latest
+Untagged: shubham1921/simple-devops-image@sha256:3d263dd15d21ae582865b9d0052615df18d5415fefebe53bc155af384804954d
+[root@VM3 dock]#
+[root@VM3 dock]# docker images
+REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
+simple-devops-image           latest    0d141472ea41   17 minutes ago   476MB
+[root@VM3 dock]# docker pull shubham1921/simple-devops-image
+Using default tag: latest
+latest: Pulling from shubham1921/simple-devops-image
+Digest: sha256:3d263dd15d21ae582865b9d0052615df18d5415fefebe53bc155af384804954d
+Status: Downloaded newer image for shubham1921/simple-devops-image:latest
+docker.io/shubham1921/simple-devops-image:latest
+[root@VM3 dock]# docker images
+REPOSITORY                        TAG       IMAGE ID       CREATED          SIZE
+shubham1921/simple-devops-image   latest    0d141472ea41   18 minutes ago   476MB
+simple-devops-image               latest    0d141472ea41   18 minutes ago   476MB
+
+-------------------------------------------------------------------------------------
+Now try to pull images from other system , below trying in window , because we push image as a public , we are able to pull 
+-------------------------------------------------------------------------------------
+
+C:\Users\Shubham>docker pull shubham1921/simple-devops-image
+Using default tag: latest
+latest: Pulling from shubham1921/simple-devops-image
+1bc677758ad7: Already exists
+0d0e0ecb256a: Already exists
+c24bf4c725c2: Already exists
+4fb255c76461: Already exists
+b388fec4cd21: Already exists
+99a8fb48e61c: Already exists
+44f4facf54e7: Already exists
+57ae469f8127: Pull complete
+Digest: sha256:3d263dd15d21ae582865b9d0052615df18d5415fefebe53bc155af384804954d
+Status: Downloaded newer image for shubham1921/simple-devops-image:latest
+docker.io/shubham1921/simple-devops-image:latest
+
+C:\Users\Shubham>docker run --name test1 -d -it -p 8888:8080 shubham1921/simple-devops-image
+ea6d0b2f15f74a51fc5b72809ccc26530c7eea5da07ce7dbc4b535ffb4ec30bc
+
+http://192.168.3.95:8888/webapp/
+
+Able to access project in window system 
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 
 
 
