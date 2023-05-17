@@ -481,7 +481,7 @@ git -----> jenkins --------------> Ansible
 
 
 ------------------------------------------------------------------------------------------------
-# First playbook that run on Ansible server to create build image and push to docker hub
+# First playbook , that run on Ansible server to create build image and push to docker hub
 ------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
 tagging Docker images using Ansible -Plabook
@@ -546,14 +546,45 @@ PLAY RECAP *********************************************************************
 
 
 
+------------------------------------------------------------------------------------------------
+# Second playbook , that run on Ansible target host  to Pull image from docker hib and run container
+------------------------------------------------------------------------------------------------
+[root@VM3 dock]# ll
+total 24
+-rw-r--r-- 1 root root   74 May 15 21:51 Dockerfile
+-rw-r--r-- 1 root root  302 May 15 22:46 docker_image.yml
+-rw-r--r-- 1 root root  328 May 15 22:45 docker_image.yml-bkp
+-rw-r--r-- 1 root root  745 May 17 03:04 pullfromdocker.yml
+-rw-r--r-- 1 root root  593 May 17 01:30 push2dockerhub.yml
+-rw-r--r-- 1 root root 2323 May 16 22:16 webapp.war
 
+[root@VM3 dock]# cat pullfromdocker.yml
+---
+- name: create docker image and push to docker-hub
+  hosts: all
+  user: root
+  become: true
+  tasks:
+  - name: Stop current running docker container
+    command: docker stop  simple-devops-container
+    ignore_errors: true
 
+  - name: Remove docker container
+    command: docker rm simple-devops-container
+    ignore_errors: true
 
+  - name:  Remove docker image
+    command: docker rmi shubham1921/simple-devops-image:latest
+    ignore_errors: true
 
+  - name:  Pull docker image from docker-hub
+    command: docker pull shubham1921/simple-devops-image:latest
 
-
-
-
+  - name:  create container and run using simple-devops-image
+    command: docker run --name simple-devops-container -d -it -p 8080:8080 shubham1921/simple-devops-image:latest
+    
+ 
+ Access the docker container : http://192.168.2.112:8080/webapp/
 
 
 
