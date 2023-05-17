@@ -608,12 +608,32 @@ so we can restrict using below comamnd to run playbook on 1st server
 
 [root@VM3 dock]# ansible-playbook  docker_image.yml --limit 192.168.3.207	for container (playbook2) on server2,3  , target hosts
 ------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+NOW Jenkins job to deploy war file into docker container using Ansible playbook 
+just use the above two plabook command in jenkins exec places
 
+New JOb : let say : Jenkins2deploy_docker_using_Ansible
 
+Github URL : https://github.com/shubhamgoel01/hello-world.git
+branch : */main
+goal : clean install package
+Send build artifacts over SSH : select server where ansible playbook are : Ansible server , so that we can run playbook on target hosts as well (VM3)
+Source files : webapp/target/*.war
+Remove prefix : webapp/target/
+Remote directory: //opt//dock
+Exec command : cd  /opt/dock ;ansible-playbook  push2dockerhub.yml ; ansible-playbook pullfromdocker.yml
 
+save and build the job
 
+NOTE : First try to use below command to test server with out password , else generate key-gen and save the key to other VM
+ssh-keygen
+ssh-copy-id ansadmin@<target-server>
 
+[root@VM3 dock]# ansible all -m ping
 
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+	K8 : kubernetes
 ------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------
 
