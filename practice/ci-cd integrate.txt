@@ -456,11 +456,30 @@ http://192.168.3.95:8888/webapp/
 Able to access project in window system 
 -------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
+
+NOW our scenerio is : 
+
+In jenkins , we are fetching code from Github and building and deploy the .war file into another VM (where docker/ansible running) 
+Now we need  2 playbook , one that push images into docker hub and other one for deployment , that run on host/target system (To create docker container on target system/hosts)
+
+git -----> jenkins --------------> Ansible 
+						↓
+						↓
+		docker-image-push		↓
+	↓-------------<-----<---------↓	 Deployment
+	↓					↓	
+	↓					↓ 
+	↓					↓ 
+	↓					↓
+	Docker hub----------------> Docker
+			docker-image-pull
 
 
 
-
-
+-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 
 
 
