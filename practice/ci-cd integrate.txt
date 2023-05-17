@@ -117,31 +117,15 @@ sudo timedatectl set-timezone Asia/Kolkata Asia/Kolkata
 4 ) Integrating Docker in CI/CD - jenkins
 --------------------------------------------------------------------
 
-start docker in local window / VM 
+Start docker in local window / VM 
 and pull tomcat image and start container
 
-
-
 C:\Users\shubh>docker pull tomcat:9.0.75
-9.0.75: Pulling from library/tomcat
-1bc677758ad7: Pull complete
-0d0e0ecb256a: Pull complete
-c24bf4c725c2: Pull complete
-4fb255c76461: Pull complete
-b388fec4cd21: Pull complete
-99a8fb48e61c: Pull complete
-44f4facf54e7: Pull complete
-Digest: sha256:92bdc746db04e2bb7764e19c68fcb68e3bb6eeebcee765b964526c13bb5598b3
-Status: Downloaded newer image for tomcat:9.0.75
-docker.io/library/tomcat:9.0.75
 
 C:\Users\shubh>docker images
 REPOSITORY   TAG       IMAGE ID       CREATED      SIZE
 tomcat       9.0.75    5c0a063260b0   4 days ago   476MB
 
-C:\Users\shubh>
-C:\Users\shubh>
-C:\Users\shubh>
 C:\Users\shubh>docker run --name tomactcont1 -d -it -p 7070:8080 tomcat:9.0.75
 c88b22ee39b40baa9c36eccecd646c3f22fd49519310c4d0c39b0f34772232ad
 
@@ -149,9 +133,8 @@ C:\Users\shubh>docker ps
 CONTAINER ID   IMAGE           COMMAND             CREATED          STATUS         PORTS                    NAMES
 c88b22ee39b4   tomcat:9.0.75   "catalina.sh run"   10 seconds ago   Up 9 seconds   0.0.0.0:7070->8080/tcp   tomactcont1
 
-
 ------------------------------------------------------------------------------------
-# Deploy war file over ssh (another VM , in that VM we can run docker and create docker file and in jenkins we can start build and run container)
+# Deploy war file over ssh (another VM , in that VM we can run docker and create docker file and in jenkins we can start build and run that docker container)
 # here we are adding VM into jenkins
 Jenkins plugin : publish over ssh  
 
@@ -190,7 +173,7 @@ Remove prefix : webapp/target
 
 Apply and save and build job
 
-ll /root/webapp.war  in 192.168.0.171 
+ll /root/webapp.war  in 192.168.0.171 / server2
 
 -----------------------------------------------------------------------------------
 take war file 
@@ -235,11 +218,11 @@ CONTAINER ID   IMAGE                        COMMAND                  CREATED    
 
 http://192.168.3.95:8002/webapp/
 
-war project output will come display
+war project output will  display
 
 ------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------------------
-build image and run container in jenkins
+# Build image and run container in jenkins
 
 install docker in oracle : https://oracle-base.com/articles/linux/docker-install-docker-on-oracle-linux-ol8
 in jenkins : 
@@ -259,12 +242,13 @@ total 8
 -rw-r--r-- 1 root root 2323 May 15 22:07 webapp.war
 
 vim Dockerfile
+-----------------------
 FROM tomcat:9.0.75
 
 MAINTAINER Shubham
 
 COPY .  /usr/local/tomcat/webapps
-
+-----------------------
 Access the http://192.168.2.112:8880/webapp/
 
 task complete 
@@ -273,9 +257,9 @@ docker rm dockercont1
 docker rmi dockerimg
 
 
-issue : If you run same job again , you will get issue that you cant create container with same name again , so TO Overcsome this problem we will use ansible
+issue : If you run same job again , you will get issue that you cant create container with same name again , so
+TO Overcsome this problem we will use Ansible
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-
 ---
 - name: Create docker image with ansible
   hosts: all
