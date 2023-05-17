@@ -193,7 +193,7 @@ Apply and save and build job
 ll /root/webapp.war  in 192.168.0.171 
 
 -----------------------------------------------------------------------------------
-take war project 
+take war file 
 and copy to - under one project name : war-project and create one file with name : Dockerfile
 --------------
 FROM tomcat:9.0.75
@@ -203,6 +203,7 @@ MAINTAINER Shubham
 COPY .  /usr/local/tomcat/webapps
 -----------------------
 -----------------------
+# Build docker with war and Dockerfile using command
 
 C:\Users\Shubham\Desktop\docker\war-project>docker build -t wartomcat .
 [+] Building 0.3s (7/7) FINISHED
@@ -235,6 +236,125 @@ CONTAINER ID   IMAGE                        COMMAND                  CREATED    
 http://192.168.3.95:8002/webapp/
 
 war project output will come display
+
+------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
+build image and run container in jenkins
+
+install docker in oracle : https://oracle-base.com/articles/linux/docker-install-docker-on-oracle-linux-ol8
+in jenkins : 
+GIthub URL:
+Post-build Actions
+	Send build artifacts over SSH
+	SSH server : select 	VM 3 where docker running
+		Source files : webapp/target/*.war
+		Remove prefix : webapp/target/
+		Remote directory : //opt//dock
+		Exec command : cd  /opt/dock ; docker build -t dockerimg . ; docker run --name dockercont1 -d -it  -p 8880:8080 dockerimg ;
+			
+In other VM 
+[root@VM3 dock]# ll /opt/dock/
+total 8
+-rw-r--r-- 1 root root   74 May 15 21:51 Dockerfile
+-rw-r--r-- 1 root root 2323 May 15 22:07 webapp.war
+
+vim Dockerfile
+FROM tomcat:9.0.75
+
+MAINTAINER Shubham
+
+COPY .  /usr/local/tomcat/webapps
+
+Access the http://192.168.2.112:8880/webapp/
+
+task complete 
+docker stop dockercont1
+docker rm dockercont1
+docker rmi dockerimg
+
+
+issue : If you run same job again , you will get issue that you cant create container with same name again , so TO Overcsome this problem we will use ansible
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+---
+- name: Create docker image with ansible
+  hosts: all
+  become: true
+  tasks:
+    - name: Remove existing docker image
+      command: "docker rmi simple-devops-image"
+      ignore_errors: true
+
+
+    - name: building docker image
+      shell: "docker build -t simple-devops-image ." 
+      args: 
+        chdir: /opt/dock
+
+--------------------------------------------------------------------------------------------------------
+---
+- name: Create docker image with ansible
+  hosts: all
+  become: true
+  tasks:
+    - name: Remove existing docker image
+      command: "docker rmi simple-devops-image"
+      ignore_errors: true
+
+
+    - name: building docker image
+      shell: "cd /opt/dock && docker build -t simple-devops-image ." 
+
+[root@VM3 dock]# ansible-playbook  docker_image.yml -kv
+[root@VM3 dock]# ll /opt/dock/
+total 16
+-rw-r--r-- 1 root root   74 May 15 21:51 Dockerfile
+-rw-r--r-- 1 root root  302 May 15 22:46 docker_image.yml
+-rw-r--r-- 1 root root  328 May 15 22:45 docker_image.yml-bkp
+-rw-r--r-- 1 root root 2323 May 15 22:07 webapp.war
+
+ABOVE: we run manually ansible playbook to check , Now we will run ansible playbook in jenkins , 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+jenkins 192.168.0.121
+docker 192.168.0.139
+
+jenkins job : 
+github code
+Goals and options : clean install package
+Send build artifacts over SSH :	
+	choose server name : where docker is running and where playbook file are 
+	Source files : webapp/target/*.war
+	Remove prefix : webapp/target/
+	Exec command : cd  /opt/dock ;ansible-playbook  docker_image.yml 
+
+
+NOTE: jenkins run on 192.168.0.121 , it build and transfer file on 192.168.0.139 and  execute below command
+cd  /opt/dock ;ansible-playbook  docker_image.yml
+
+[root@192.168.0.139  ]# ll /opt/dock/
+total 16
+-rw-r--r-- 1 root root   74 May 15 21:51 Dockerfile
+-rw-r--r-- 1 root root  302 May 15 22:46 docker_image.yml
+-rw-r--r-- 1 root root  328 May 15 22:45 docker_image.yml-bkp
+-rw-r--r-- 1 root root 2323 May 16 12:50 webapp.war
+
+
+
+it success
+--------------------------------------------------------------------------------------------------------------------------------
+NOW Docker HUB Integration with Ansible
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 
 
 
